@@ -1,6 +1,6 @@
 {
   "name": "pipeworks",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "description": "Fit functions together for pipelined execution.",
   "main": "pipeworks.js",
   "scripts": {

@@ -1,4 +1,4 @@
-var pipeworks = require('./pipeworks');
+var pipeworks = require('../pipeworks');
 
 var numberPipe = pipeworks()
   .fit(function(env, next) {

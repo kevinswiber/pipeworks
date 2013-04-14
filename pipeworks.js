@@ -11,18 +11,18 @@ var Pipeworks = function() {
   this.linkedList = new LinkedList();
 };
 
-Pipeworks.prototype.fit = function(options, step) {
-  if (!step) {
-    step = options;
+Pipeworks.prototype.fit = function(options, pipe) {
+  if (!pipe) {
+    pipe = options;
     options = {};
   }
 
   if (!options.affinity) {
-    this.pipes.push(step);
+    this.pipes.push(pipe);
   } else if (options.affinity === 'hoist') {
-    this.pre.unshift(step);
+    this.pre.unshift(pipe);
   } else if (options.affinity === 'sink') {
-    this.post.push(step);
+    this.post.push(pipe);
   }
 
   if (this.state === 'fresh') {
@@ -37,16 +37,20 @@ Pipeworks.prototype.map = function() {
     this.next.map();
   }
 
-  var pipes = this.pre.concat(this.steps, this.post);
-  pipes = steps.slice(0).reverse();
+  var pipes = this.pre.concat(this.pipes, this.post);
+  pipes = pipes.slice(0).reverse();
 
   var self = this;
-  pipes.forEach(function(step) {
+  pipes.forEach(function(pipe) {
     var obj = new LinkedList.Node(function(next) {
       return function() {
         var args = Array.prototype.slice.apply(arguments);
-        args.push(next);
-        step.apply(self, args);
+        if (args.length) {
+          args.push(next);
+          pipe.apply(self, args);
+        } else {
+          pipe.call(self, next);
+        }
       };
     });
 
@@ -79,7 +83,11 @@ Pipeworks.prototype.flow = function() {
   }
 
   if (this.state === 'built') {
-    this.pipeline.apply(this, arguments);
+    if (!arguments.length) {
+      this.pipeline.apply(this);
+    } else {
+      this.pipeline.apply(this, arguments);
+    }
   };
 
   return this;
@@ -108,10 +116,18 @@ Pipeworks.prototype.siphon = function() {
     var rest = args.slice(0, args.length - 1);
     var _ = args[args.length - 1];
 
-    next.apply(this, rest);
+    if (args.length > 1) {
+      next.apply(this, rest);
+    } else {
+      next.call(this);
+    }
   });
 
-  this.flow.apply(this, rest);
+  if (args.length > 1) {
+    this.flow.apply(this, rest);
+  } else {
+    this.flow.call(this);
+  }
 
   return this;
 };
