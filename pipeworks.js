@@ -2,7 +2,7 @@ var LinkedList = require('./linked_list');
 
 var Pipeworks = function() {
   this.pre = [];
-  this.steps = [];
+  this.pipes = [];
   this.post = [];
 
   this.state = 'fresh'; // 'fresh', 'populated', 'built'
@@ -18,7 +18,7 @@ Pipeworks.prototype.fit = function(options, step) {
   }
 
   if (!options.affinity) {
-    this.steps.push(step);
+    this.pipes.push(step);
   } else if (options.affinity === 'hoist') {
     this.pre.unshift(step);
   } else if (options.affinity === 'sink') {
@@ -37,11 +37,11 @@ Pipeworks.prototype.map = function() {
     this.next.map();
   }
 
-  var steps = this.pre.concat(this.steps, this.post);
-  steps = steps.slice(0).reverse();
+  var pipes = this.pre.concat(this.steps, this.post);
+  pipes = steps.slice(0).reverse();
 
   var self = this;
-  steps.forEach(function(step) {
+  pipes.forEach(function(step) {
     var obj = new LinkedList.Node(function(next) {
       return function() {
         var args = Array.prototype.slice.apply(arguments);

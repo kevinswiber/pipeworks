@@ -45,6 +45,8 @@ $ npm install pipeworks
 
 Add a pipe to the pipeline.
 
+`options.affinity` - Either `hoist` or `sink`. Adds to the pre and post queues, respectively. Ensures a pipe gets fitted before or after the main execution pipeline.
+
 ### pipeline.siphon([arguments], next)
 
 Redirect the flow to another pipeline.
