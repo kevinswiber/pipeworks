@@ -8,6 +8,7 @@ var Pipeline = module.exports = function() {
   this.state = 'fresh'; // 'fresh', 'populated', 'built'
   this.pipeline = null;
   this.next = null;
+  this.linkedList = new LinkedList();
 };
 
 Pipeline.prototype.add = function(options, step) {
@@ -31,8 +32,10 @@ Pipeline.prototype.add = function(options, step) {
   return this;
 };
 
-Pipeline.prototype.build = function() {
-  var linkedList = new LinkedList();
+Pipeline.prototype.map = function() {
+  if (this.next) {
+    this.next.map();
+  }
 
   var steps = this.pre.concat(this.steps, this.post);
   steps = steps.slice(0).reverse();
@@ -47,10 +50,16 @@ Pipeline.prototype.build = function() {
       };
     });
 
-    linkedList.add(obj);
+    self.linkedList.add(obj);
   });
 
-  var node = linkedList.head();
+  return this;
+};
+
+Pipeline.prototype.build = function() {
+  this.map();
+
+  var node = this.linkedList.head();
 
   var reduced = new LinkedList.Node();
   reduced = node.value;
@@ -72,24 +81,18 @@ Pipeline.prototype.call = function() {
   if (this.state === 'built') {
     this.pipeline.apply(this, arguments);
   };
+
+  return this;
 };
 
 Pipeline.prototype.join = function(pipeline) {
   this.pipeline = null;
-
-  var oldState = this.state;
-
-  var self = this;
-  if (pipeline && pipeline.steps) {
-    var steps = pipeline.pre.concat(pipeline.steps, pipeline.post);
-    self.post = self.post.concat(steps);
-  }
+  this.next = pipeline;
+  this.next.linkedList = this.linkedList;
 
   if (this.state === 'fresh') {
     this.state = 'populated';
-  }
-
-  if (oldState === 'built') {
+  } else if (this.state === 'built') {
     this.build();
   }
 
@@ -109,4 +112,6 @@ Pipeline.prototype.fork = function() {
   });
 
   this.call.apply(this, rest);
+
+  return this;
 };
