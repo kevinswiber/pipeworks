@@ -73,7 +73,7 @@ Pipeworks.prototype.build = function() {
   return this;
 };
 
-Pipeworks.prototype.call = function() {
+Pipeworks.prototype.flow = function() {
   if (this.state === 'populated') {
     this.build();
   }
@@ -99,7 +99,7 @@ Pipeworks.prototype.join = function(pipeline) {
   return this;
 };
 
-Pipeworks.prototype.split = function() {
+Pipeworks.prototype.siphon = function() {
   var args = Array.prototype.slice.apply(arguments);
   var rest = args.slice(0, args.length - 1);
   var next = args[args.length - 1];
@@ -111,7 +111,7 @@ Pipeworks.prototype.split = function() {
     next.apply(this, rest);
   });
 
-  this.call.apply(this, rest);
+  this.flow.apply(this, rest);
 
   return this;
 };
