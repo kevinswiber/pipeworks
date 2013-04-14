@@ -162,7 +162,7 @@ Send something down the pipeline!  Any number of arguments can be sent, but ofte
 pipeline()
   .fit(function(context, next) {
     context.age = 30;
-    next(env);
+    next(context);
   })
   .flow({ name: 'Kevin' });
 ```
