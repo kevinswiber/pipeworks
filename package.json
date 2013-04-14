@@ -1,0 +1,18 @@
+{
+  "name": "event-pipeline",
+  "version": "0.0.1",
+  "description": "Add event handlers to a pipeline and pass a context through on execution.",
+  "main": "pipeline.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "event",
+    "pipeline",
+    "reducer",
+    "aggregate"
+  ],
+  "author": "Kevin Swiber <kswiber@gmail.com>",
+  "license": "MIT"
+}
