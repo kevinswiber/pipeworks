@@ -33,6 +33,12 @@ pipeworks()
 // I B3T I C0U1D 34T M0R3 T0FU R011S TH4N 4NY0N3!!11~!11!
 ```
 
+## Install
+
+```bash
+$ npm install pipeworks
+```
+
 ## Usage
 
 ### pipeline.fit([options], pipe)
