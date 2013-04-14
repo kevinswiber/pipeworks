@@ -1,8 +1,8 @@
 {
-  "name": "event-pipeline",
+  "name": "pipeworks",
   "version": "0.0.1",
-  "description": "Add event handlers to a pipeline and pass a context through on execution.",
-  "main": "pipeline.js",
+  "description": "Fit functions together for pipelined execution.",
+  "main": "pipeworks.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

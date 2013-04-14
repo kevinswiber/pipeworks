@@ -1,54 +1,54 @@
-var Pipeline = require('./pipeline');
+var pipeworks = require('./pipeworks');
 
-var pipeline3 = new Pipeline()
-  .add(function(env, next) {
+var hijacker = pipeworks()
+  .fit(function(env, next) {
     console.log('hijacked!');
     env.hijacked = true;
     next(env);
   })
-  .add(function(env, next) {
+  .fit(function(env, next) {
     console.log('boyeeee!');
     next(env);
   });
 
-var pipeline = new Pipeline()
-  .add(function(env, next) {
+var numberPipe = pipeworks()
+  .fit(function(env, next) {
     console.log('zero:', env.zero);
     env.one = '1';
     next(env);
   })
-  .add(function(env, next) {
+  .fit(function(env, next) {
     console.log('one:', env.one);
     env.two = '2';
 
-    pipeline3.fork(env, next);
+    hijacker.split(env, next);
   })
-  .add(function(env, next) {
+  .fit(function(env, next) {
     console.log('two:', env.two);
     env.a = 'a';
     next(env);
   })
 
-var pipeline2 = new Pipeline()
-  .add(function(env, next) {
+var letterPipe = pipeworks()
+  .fit(function(env, next) {
     console.log('a:', env.a);
     env.b = 'b';
     next(env);
   })
-  .add(function(env, next) {
+  .fit(function(env, next) {
     console.log('b:', env.b);
     env.c = 'c';
     next(env);
   })
-  .add(function(env, next) {
+  .fit(function(env, next) {
     console.log('c:', env.c);
     next(env);
   });
 
 
 var map = {
-  'numbers': new Pipeline(),
-  'letters': new Pipeline()
+  'numbers': pipeworks(),
+  'letters': pipeworks()
 };
 
 function handle(type, options, step) {
@@ -58,10 +58,10 @@ function handle(type, options, step) {
   }
 
   if (!(type in map)) {
-    map[type] = new Pipeline();
+    map[type] = pipeworks();
   }
 
-  map[type].add(options, step);
+  map[type].fit(options, step);
 }
 
 handle('numbers', function(env, next) {
@@ -74,7 +74,7 @@ handle('numbers', function(env, next) {
   console.log('one:', env.one);
   env.two = '2';
 
-  env.pipeline('rogue').fork(env, next);
+  env.pipeline('rogue').split(env, next);
 });
 
 handle('numbers', function(env, next) {
@@ -106,7 +106,7 @@ handle('rogue', function(env, next) {
   next(env);
 });
 
-handle('rogue', { hoist: true }, function(env, next) {
+handle('rogue', { affinity: 'hoist'}, function(env, next) {
   console.log('achoo!');
   next(env);
 });
@@ -122,4 +122,4 @@ var getPipeline = function(name) {
 
 map['numbers'].join(map['letters']).call({ zero: 0, pipeline: getPipeline });
 
-//pipeline.join(pipeline2).call({ zero: 0 });
+//pipeworks.join(letterPipe).call({ zero: 0 });

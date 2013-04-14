@@ -1,6 +1,6 @@
 var LinkedList = require('./linked_list');
 
-var Pipeline = module.exports = function() {
+var Pipeworks = function() {
   this.pre = [];
   this.steps = [];
   this.post = [];
@@ -11,18 +11,18 @@ var Pipeline = module.exports = function() {
   this.linkedList = new LinkedList();
 };
 
-Pipeline.prototype.add = function(options, step) {
+Pipeworks.prototype.fit = function(options, step) {
   if (!step) {
     step = options;
     options = {};
   }
 
-  if (options.hoist) {
-    this.pre.unshift(step);
-  } else if (options.sink) {
-    this.post.push(step);
-  } else {
+  if (!options.affinity) {
     this.steps.push(step);
+  } else if (options.affinity === 'hoist') {
+    this.pre.unshift(step);
+  } else if (options.affinity === 'sink') {
+    this.post.push(step);
   }
 
   if (this.state === 'fresh') {
@@ -32,7 +32,7 @@ Pipeline.prototype.add = function(options, step) {
   return this;
 };
 
-Pipeline.prototype.map = function() {
+Pipeworks.prototype.map = function() {
   if (this.next) {
     this.next.map();
   }
@@ -56,7 +56,7 @@ Pipeline.prototype.map = function() {
   return this;
 };
 
-Pipeline.prototype.build = function() {
+Pipeworks.prototype.build = function() {
   this.map();
 
   var node = this.linkedList.head();
@@ -73,7 +73,7 @@ Pipeline.prototype.build = function() {
   return this;
 };
 
-Pipeline.prototype.call = function() {
+Pipeworks.prototype.call = function() {
   if (this.state === 'populated') {
     this.build();
   }
@@ -85,7 +85,7 @@ Pipeline.prototype.call = function() {
   return this;
 };
 
-Pipeline.prototype.join = function(pipeline) {
+Pipeworks.prototype.join = function(pipeline) {
   this.pipeline = null;
   this.next = pipeline;
   this.next.linkedList = this.linkedList;
@@ -99,11 +99,11 @@ Pipeline.prototype.join = function(pipeline) {
   return this;
 };
 
-Pipeline.prototype.fork = function() {
+Pipeworks.prototype.split = function() {
   var args = Array.prototype.slice.apply(arguments);
   var rest = args.slice(0, args.length - 1);
   var next = args[args.length - 1];
-  this.add({ sink: true }, function() {
+  this.fit({ affinity: 'sink' }, function() {
     var args = Array.prototype.slice.apply(arguments);
     var rest = args.slice(0, args.length - 1);
     var _ = args[args.length - 1];
@@ -114,4 +114,8 @@ Pipeline.prototype.fork = function() {
   this.call.apply(this, rest);
 
   return this;
+};
+
+module.exports = function() {
+  return new Pipeworks();
 };
