@@ -1,8 +1,8 @@
 # pipeworks 
+Modularize functionality into execution pipelines.  Create pipes.  Fit 'em together.  Start the flow!
 
-Modularize functionality into pipes.  Fit 'em together.  Let it flow!
-
-- Siphon into new execution pipelines at runtime.
+- Connect components in an execution pipeline.
+- Siphon into new execution pipelines during execution.
 - Join multiple pipelines together.
 - Set pipe affinity on attachment.
 
