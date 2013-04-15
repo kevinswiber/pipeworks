@@ -3,7 +3,7 @@
 Create pipes.  Fit 'em together.  Start the flow!
 
 - Modularize functionality into execution pipelines.
-- Siphon into new execution pipelines during execution.
+- Siphon into new pipelines during execution.
 - Join multiple pipelines together.
 - Set pipe affinity on attachment.
 
@@ -54,7 +54,7 @@ var pipeline = pipeworks();
 
 ### pipes
 
-Pipes are the modular component of pipeworks.  Pipes are fitted together to form a pipeline.
+Pipes are the modular component of pipeworks.  Fit pipes together to form a pipeline.
 
 They have the following signature: `function([arguments], next)`.  Pipes can take any number of arguments you wish to pass.  However, it's common to use a single `context` variable as a record to pass state between steps in the execution pipeline.  The last parameter passed to a pipe is a reference to the next function in the pipeline.  Pipes should always end with a call to `next([arguments])`.
 
@@ -72,13 +72,6 @@ var pipe = function(context, next) {
 Add a pipe to the pipeline.
 
 `options.affinity` - Either `hoist` or `sink`. Adds to the pre and post queues, respectively. Ensures a pipe gets fitted before or after the main execution pipeline.
-
-```javascript
-pipeline.fit(function(context, next) {
-  context.hotness = 'teh nodez';
-  next(context);
-});
-```
 
 The effect of setting the pipeline affinity to `'hoist'`:
 
@@ -206,6 +199,8 @@ pipeworks()
 // Output:
 // { name: 'Kevin', age: 30 }
 ```
+
+Enjoy!
 
 ## License
 
