@@ -41,21 +41,26 @@ Pipeworks.prototype.map = function() {
   pipes = pipes.slice(0).reverse();
 
   var self = this;
-  pipes.forEach(function(pipe) {
-    var obj = new LinkedList.Node(function(next) {
-      return function() {
-        var args = Array.prototype.slice.apply(arguments);
-        if (args.length) {
-          args.push(next);
-          pipe.apply(self, args);
-        } else {
-          pipe.call(self, next);
-        }
-      };
-    });
+
+  for(var i = 0, len = pipes.length; i < len; i++) {
+    var pipe = pipes[i];
+    var obj = (function(pipe) {
+      return new LinkedList.Node(function(next) {
+        return function() {
+          var args = Array.prototype.slice.apply(arguments);
+          if (args.length) {
+            args.push(next);
+            pipe.apply(self, args);
+          } else {
+            pipe.call(self, next);
+          }
+        };
+      });
+    }(pipe));
 
     self.linkedList.add(obj);
-  });
+  }
+
 
   return this;
 };
