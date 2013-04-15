@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -rf ../pipeworks-jscoverage/
+jscoverage --exclude=example --exclude=node_modules ./ ../pipeworks-jscoverage
+cd ../pipeworks-jscoverage/
+mocha --reporter html-cov > coverage.html
+open coverage.html
