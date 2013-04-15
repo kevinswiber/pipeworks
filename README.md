@@ -1,5 +1,9 @@
 # pipeworks 
 
+[![browser support](http://ci.testling.com/kevinswiber/pipeworks.png)](http://ci.testling.com/kevinswiber/pipeworks)
+
+[![Build Status](https://travis-ci.org/kevinswiber/pipeworks.png)](https://travis-ci.org/kevinswiber/pipeworks)
+
 Create pipes.  Fit 'em together.  Start the flow!
 
 - Modularize functionality into execution pipelines.
