@@ -15,5 +15,20 @@
     "aggregate"
   ],
   "author": "Kevin Swiber <kswiber@gmail.com>",
+  "devDependencies": {
+    "mocha": "~1.9.0"
+  },
+  "testling": {
+    "browsers": [
+      "ie/6..latest",
+      "chrome/20..latest",
+      "firefox/10..latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6"
+    ],
+    "harness": "mocha",
+    "files": "test/*.js"
+  },
   "license": "MIT"
 }
