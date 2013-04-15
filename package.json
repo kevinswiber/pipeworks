@@ -1,10 +1,10 @@
 {
   "name": "pipeworks",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "description": "Modularize functionality into execution pipelines. Create pipes. Fit 'em together. Start the flow!",
   "main": "pipeworks.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec"
   },
   "repository": "https://github.com/kevinswiber/pipeworks",
   "keywords": [
