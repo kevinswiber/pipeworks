@@ -144,6 +144,7 @@ Link pipelines together.
 ```javascript
 var first = pipeworks();
 var second = pipeworks();
+var third = pipeworks();
 
 first
   .fit(function(context, next) {
@@ -165,18 +166,30 @@ second
     next(context);
   });
 
-first.join(second).flow({});
+third
+  .fit(function(context, next) {
+    console.log('gamma');
+    next(context);
+  })
+  .fit(function(context, next) {
+    console.log('georgetown');
+    next(context);
+  });
+
+first.join(second).join(third).flow({});
 
 // Output:
 // alpha
 // atlanta
 // beta
 // boise
+// gamma
+// georgetown
 ```
 
 ### pipeline.flow([arguments])
 
-Send something down the pipeline!  Any number of arguments can be sent, but often there's just one.
+Send something down the pipeline!  Any number of arguments can be sent, but often there's just a single `context` object.
 
 ```javascript
 pipeworks()
