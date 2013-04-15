@@ -94,14 +94,20 @@ Pipeworks.prototype.flow = function() {
 };
 
 Pipeworks.prototype.join = function(pipeline) {
-  this.pipeline = null;
   var obj = this;
-  while (obj.next) {
-    obj = obj.next;
-  }
-  obj.next = pipeline;
-  obj.next.linkedList = this.linkedList;
 
+  if (obj.next) {
+    while (obj.next) {
+      obj = obj.next;
+    }
+
+    obj.join(pipeline);
+    return this;
+  }
+
+  this.pipeline = null;
+  this.next = pipeline;
+  this.next.linkedList = this.linkedList;
   if (this.state === 'fresh') {
     this.state = 'populated';
   } else if (this.state === 'built') {
