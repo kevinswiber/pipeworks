@@ -1,16 +1,17 @@
 {
   "name": "pipeworks",
   "version": "0.0.9",
-  "description": "Fit functions together for pipelined execution.",
+  "description": "Modularize functionality into execution pipelines. Create pipes. Fit 'em together. Start the flow!",
   "main": "pipeworks.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/kevinswiber/pipeworks",
   "keywords": [
-    "event",
+    "execution",
+    "pipe",
     "pipeline",
-    "reducer",
+    "reduce",
     "aggregate"
   ],
   "author": "Kevin Swiber <kswiber@gmail.com>",
