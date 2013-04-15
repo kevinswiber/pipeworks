@@ -79,6 +79,25 @@ pipeline.fit(function(context, next) {
 });
 ```
 
+The effect of setting the pipeline affinity to `'hoist'`:
+
+```javascript
+pipeworks()
+  .fit(function(context, next) {
+    console.log('Cal Naughton, Jr: Shake and bake!');
+    next(context);
+  })
+  .fit({ affinity: 'hoist' }, function(context, next) {
+    console.log('Ricky Bobby: If you ain\'t first, you\'re last!');
+    next(context);
+  })
+  .flow({});
+
+// Output:
+// Ricky Bobby: If you ain't first, you're last!
+// Cal Naughton, Jr: Shake and bake!
+```
+
 ### pipeline.siphon([arguments], next)
 
 Redirect the flow to another pipeline.
@@ -159,12 +178,19 @@ first.join(second).flow({});
 Send something down the pipeline!  Any number of arguments can be sent, but often there's just one.
 
 ```javascript
-pipeline()
+pipeworks()
   .fit(function(context, next) {
     context.age = 30;
     next(context);
   })
+  .fit(function(context, next) {
+    console.log(context);
+    next(context);
+  })
   .flow({ name: 'Kevin' });
+
+// Output:
+// { name: 'Kevin', age: 30 }
 ```
 
 ## License
