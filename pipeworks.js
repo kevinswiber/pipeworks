@@ -50,26 +50,7 @@ Pipeworks.prototype.map = function() {
           var args = Array.prototype.slice.apply(arguments);
           var arity = pipe.length;
 
-          if (arity < args.length + 1) {
-            args[arity - 1] = next;
-          } else if (arity > args.length + 1) {
-            var len = arity - 1;
-            var args1 = new Array(len);
-
-            for(var i = 0; i < len; i++) {
-              if (args[i]) {
-                args1[i] = args[i];
-              } else {
-                args1[i] = null;
-              }
-            }
-
-            args1.push(next);
-            args = args1;
-          } else {
-            args.push(next);
-          }
-
+          args = self._mergeArgs(args, arity, next);
           pipe.apply(self, args);
         };
       });
@@ -78,8 +59,35 @@ Pipeworks.prototype.map = function() {
     self.linkedList.add(obj);
   }
 
-
   return this;
+};
+
+Pipeworks.prototype._mergeArgs = function(args, arity, next) {
+  if (arity === 0) { // function may be using `arguments`
+    args.push(next);
+    return args;
+  }
+  if (arity < args.length + 1) {
+    args[arity - 1] = next;
+  } else if (arity > args.length + 1) {
+    var len = arity - 1;
+    var args1 = new Array(len);
+
+    for(var i = 0; i < len; i++) {
+      if (args[i]) {
+        args1[i] = args[i];
+      } else {
+        args1[i] = null;
+      }
+    }
+
+    args1.push(next);
+    args = args1;
+  } else {
+    args.push(next);
+  }
+
+  return args;
 };
 
 Pipeworks.prototype.build = function() {
