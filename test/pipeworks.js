@@ -104,3 +104,23 @@ describe('Pipeworks#siphon', function() {
       .flow();
   });
 });
+
+describe('Pipeworks#flow', function() {
+  it('sets the next argument when flow arguments are greater than the first pipe\'s arity', function(done) {
+    pipeworks()
+      .fit(function(next) {
+        assert.ok(next);
+        done();
+      })
+      .flow(1, 2, 3);
+  });
+
+  it('sets the next argument when flow arguments are less than the first pipe\'s arity', function(done) {
+    pipeworks()
+      .fit(function(a, b, c, next) {
+        assert.ok(next);
+        done();
+      })
+      .flow();
+  });
+});

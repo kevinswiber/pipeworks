@@ -48,12 +48,29 @@ Pipeworks.prototype.map = function() {
       return new LinkedList.Node(function(next) {
         return function() {
           var args = Array.prototype.slice.apply(arguments);
-          if (args.length) {
-            args.push(next);
-            pipe.apply(self, args);
+          var arity = pipe.length;
+
+          if (arity < args.length + 1) {
+            args[arity - 1] = next;
+          } else if (arity > args.length + 1) {
+            var len = arity - 1;
+            var args1 = new Array(len);
+
+            for(var i = 0; i < len; i++) {
+              if (args[i]) {
+                args1[i] = args[i];
+              } else {
+                args1[i] = null;
+              }
+            }
+
+            args1.push(next);
+            args = args1;
           } else {
-            pipe.call(self, next);
+            args.push(next);
           }
+
+          pipe.apply(self, args);
         };
       });
     }(pipe));
