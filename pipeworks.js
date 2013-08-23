@@ -1,9 +1,12 @@
 var LinkedList = require('./linked_list');
+var Domain = require("domain");
 
 var Pipeworks = function() {
   this.pre = [];
   this.pipes = [];
   this.post = [];
+  this.pipeDomain = Domain.create();
+  this.pipeState = null;
 
   this.state = 'fresh'; // 'fresh', 'populated', 'built'
   this.pipeline = null;
@@ -51,7 +54,9 @@ Pipeworks.prototype.map = function() {
           var arity = pipe.length;
 
           args = self._mergeArgs(args, arity, next);
-          pipe.apply(self, args);
+          var boundPipe = self.pipeDomain.bind(pipe);
+          self.pipeState = args;
+          boundPipe.apply(self, args);
         };
       });
     }(pipe));
