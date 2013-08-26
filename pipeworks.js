@@ -1,4 +1,5 @@
 var LinkedList = require('./linked_list');
+var domain = require("domain");
 
 var Pipeworks = function() {
   this.pre = [];
@@ -9,6 +10,24 @@ var Pipeworks = function() {
   this.pipeline = null;
   this.next = null;
   this.linkedList = new LinkedList();
+
+  this.faultPipe = null;
+  this.executionState = null;
+  this.domain = domain.create();
+
+  var self = this;
+  this.domain.on('error', function(err) {
+    var state = self.executionState;
+
+    if(state) {
+      var next = state.pop();
+      state.push(err);
+      state.push(next);
+      self.faultPipe.apply(self, state);
+    } else {
+      self.faultPipe();
+    }
+  });
 };
 
 Pipeworks.prototype.fit = function(options, pipe) {
@@ -32,6 +51,11 @@ Pipeworks.prototype.fit = function(options, pipe) {
   return this;
 };
 
+Pipeworks.prototype.fault = function(pipe) {
+  this.faultPipe = pipe;
+  return this;
+};
+
 Pipeworks.prototype.map = function() {
   if (this.next) {
     this.next.map();
@@ -51,7 +75,9 @@ Pipeworks.prototype.map = function() {
           var arity = pipe.length;
 
           args = self._mergeArgs(args, arity, next);
-          pipe.apply(self, args);
+          var boundPipe = self.domain.bind(pipe);
+          self.executionState = args;
+          boundPipe.apply(self, args);
         };
       });
     }(pipe));
