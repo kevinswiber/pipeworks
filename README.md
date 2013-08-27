@@ -7,6 +7,7 @@ With *pipeworks*, you can:
 - Fit components into execution pipelines.
 - Siphon the flow into branches during execution.
 - Join multiple pipelines together.
+- Intercept errors during execution.
 
 [![Build Status](https://travis-ci.org/kevinswiber/pipeworks.png)](https://travis-ci.org/kevinswiber/pipeworks)
 
