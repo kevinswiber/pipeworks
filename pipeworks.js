@@ -196,15 +196,9 @@ var Runner = function(pipeline, faultPipe) {
     }
 
     var state = self.executionState;
+    state.splice(-1, 0, err);
 
-    if(state) {
-      var next = state.pop();
-      state.push(err);
-      state.push(next);
-      self.faultPipe.apply(self, state);
-    } else {
-      self.faultPipe();
-    }
+    self.faultPipe.apply(self, state);
   });
 };
 

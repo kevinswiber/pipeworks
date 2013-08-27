@@ -1,4 +1,5 @@
 var assert = require('assert');
+var domain = require('domain');
 var pipeworks = require('../');
 
 describe('Pipeworks#fit', function() {
@@ -119,6 +120,37 @@ describe('Pipeworks#flow', function() {
     pipeworks()
       .fit(function(a, b, c, next) {
         assert.ok(next);
+        done();
+      })
+      .flow();
+  });
+});
+
+describe('Pipeworks#fault', function() {
+  it('receives errors with context', function(done) {
+    pipeworks()
+      .fit(function(context, next) {
+        setImmediate(function() {
+          throw new Error('Ozone depleted.');
+        });
+      })
+      .fault(function(context, error) {
+        assert.equal(context.token, 'atmosphere');
+        assert.equal(error.message, 'Ozone depleted.');
+        done();
+      })
+      .flow({ token: 'atmosphere' });
+  });
+
+  it('receives errors even with no context', function(done) {
+    pipeworks()
+      .fit(function() {
+        setImmediate(function() {
+          throw new Error('Ozone depleted.');
+        });
+      })
+      .fault(function(error) {
+        assert.equal(error.message, 'Ozone depleted.');
         done();
       })
       .flow();
