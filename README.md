@@ -10,7 +10,9 @@ With *pipeworks*, you can:
 
 [![Build Status](https://travis-ci.org/kevinswiber/pipeworks.png)](https://travis-ci.org/kevinswiber/pipeworks)
 
+<!-- Testling has not been working lately. :(
 [![browser support](http://ci.testling.com/kevinswiber/pipeworks.png)](http://ci.testling.com/kevinswiber/pipeworks)
+-->
 
 ## Example
 
@@ -203,6 +205,40 @@ pipeworks()
 
 // Output:
 // { name: 'Kevin', age: 30 }
+```
+
+### pipeline.fault(callback)
+
+Handle errors during pipeline execution. Using `pipeline.fault` allows access to the current execution context when errors occur in 
+the pipeline.
+
+`callback` has the signature `function([arguments], error, next)` where `[arguments]` is the list of arguments sent to the currently executing pipe, 
+`error` is what was thrown, and `next` is a reference to the following pipe in the pipeline.  The `next` argument is provided for inspection purposes only 
+and should not be called.  See below for more information.
+
+Note: It's advisable to exit the process after an uncaught exception.  Exceptions leave your application in an unknown state. 
+This method uses [domains](http://nodejs.org/api/domain.html) under the hood.
+
+```javascript
+var breakfast = pipeworks()
+  .fit(function(context, next) {
+    process.nextTick(function() {
+      if (context.flavor !== 'cinnamon') {
+        throw new Error('These waffles are not *jazzy*!');
+      }
+    }); // simulate async I/O operation
+  })
+  .fit(function(context, next) {
+    console.log('Thanks for breakfast!'); // never reached
+  });
+
+breakfast.fault(function(context, error) {
+  console.log('Flavor on error:', context.flavor);
+  console.log(error.stack);
+  process.exit(); // the safe play
+});
+
+breakfast.flow({ flavor: 'plain' })
 ```
 
 Enjoy!
