@@ -1,26 +1,29 @@
 var pipeworks = require('../');
 
-var main = pipeworks()
+var breakfast = pipeworks()
   .fit(function(context, next) {
-    console.log('Waffle flavor:', context.flavor);
+    console.log('When the flavor is:', context.flavor);
     next(context);
   })
   .fit(function(context, next) {
-    if (context.flavor === 'cinnamon') {
-      console.log('These waffles are *jazzy*!');
-      next(context);
-    } else {
-      throw new Error('These waffles are _boring_!');
+    if (context.flavor !== 'cinnamon') {
+      throw new Error('These waffles are _boring_!\n');
     }
+
+    console.log('Hooray! These waffles are *jazzy*!\n');
+    next(context);
   })
   .fit(function(context, next) {
     console.log('Thanks for breakfast!');
   });
 
-main.fault(function(context, error, next) {
-  console.log('Error caught:', error.message);
-  context.flavor = 'cinnamon';
-  this.flow(context);
+breakfast.fault(function(context, error, next) {
+  console.log('Error!', error.message);
+
+  if (context.flavor !== 'cinnamon') {
+    context.flavor = 'cinnamon';
+    this.flow(context); // recover
+  }
 });
 
-main.flow({ flavor: 'plain' })
+breakfast.flow({ flavor: 'plain' })
