@@ -12,22 +12,6 @@ var Pipeworks = function() {
   this.linkedList = new LinkedList();
 
   this.faultPipe = null;
-  this.executionState = null;
-  this.domain = domain.create();
-
-  var self = this;
-  this.domain.on('error', function(err) {
-    var state = self.executionState;
-
-    if(state) {
-      var next = state.pop();
-      state.push(err);
-      state.push(next);
-      self.faultPipe.apply(self, state);
-    } else {
-      self.faultPipe();
-    }
-  });
 };
 
 Pipeworks.prototype.fit = function(options, pipe) {
@@ -73,11 +57,14 @@ Pipeworks.prototype.map = function() {
         return function() {
           var args = Array.prototype.slice.apply(arguments);
           var arity = pipe.length;
+          var runner = this;
+
+          next = next.bind(runner);
 
           args = self._mergeArgs(args, arity, next);
-          var boundPipe = self.domain.bind(pipe);
-          self.executionState = args;
-          boundPipe.apply(self, args);
+          runner.executionState = args;
+          var bound = runner.domain.bind(pipe);
+          bound.apply(runner, args);
         };
       });
     }(pipe));
@@ -139,11 +126,8 @@ Pipeworks.prototype.flow = function() {
   }
 
   if (this.state === 'built') {
-    if (!arguments.length) {
-      this.pipeline.apply(this);
-    } else {
-      this.pipeline.apply(this, arguments);
-    }
+    var runner = new Runner(this.pipeline, this.faultPipe);
+    runner.flow.apply(runner, arguments);
   };
 
   return this;
@@ -196,6 +180,40 @@ Pipeworks.prototype.siphon = function() {
   }
 
   return this;
+};
+
+var Runner = function(pipeline, faultPipe) {
+  this.pipeline = pipeline;
+  this.faultPipe = faultPipe;
+  this.executionState = null;
+
+  this.domain = domain.create();
+
+  var self = this;
+  this.domain.on('error', function(err) {
+    if (!self.faultPipe) {
+      throw err; // rethrow
+    }
+
+    var state = self.executionState;
+
+    if(state) {
+      var next = state.pop();
+      state.push(err);
+      state.push(next);
+      self.faultPipe.apply(self, state);
+    } else {
+      self.faultPipe();
+    }
+  });
+};
+
+Runner.prototype.flow = function() {
+  if (!arguments.length) {
+    this.pipeline.apply(this);
+  } else {
+    this.pipeline.apply(this, arguments);
+  }
 };
 
 module.exports = function() {

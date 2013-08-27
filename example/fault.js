@@ -2,20 +2,25 @@ var pipeworks = require('../');
 
 var main = pipeworks()
   .fit(function(context, next) {
-    context.flavor = 'plain';
+    console.log('Waffle flavor:', context.flavor);
     next(context);
   })
   .fit(function(context, next) {
-    throw new Error('These waffles ain\'t jazzy!');
+    if (context.flavor === 'cinnamon') {
+      console.log('These waffles are *jazzy*!');
+      next(context);
+    } else {
+      throw new Error('These waffles are _boring_!');
+    }
   })
   .fit(function(context, next) {
-    console.log('New flavor:', context.flavor);
+    console.log('Thanks for breakfast!');
   });
 
 main.fault(function(context, error, next) {
   console.log('Error caught:', error.message);
   context.flavor = 'cinnamon';
-  next(context);
+  this.flow(context);
 });
 
-main.flow({ flavor: null })
+main.flow({ flavor: 'plain' })
