@@ -130,7 +130,7 @@ describe('Pipeworks#fault', function() {
   it('receives errors with context', function(done) {
     pipeworks()
       .fit(function(context, next) {
-        setImmediate(function() {
+        process.nextTick(function() {
           throw new Error('Ozone depleted.');
         });
       })
@@ -145,7 +145,7 @@ describe('Pipeworks#fault', function() {
   it('receives errors even with no context', function(done) {
     pipeworks()
       .fit(function() {
-        setImmediate(function() {
+        process.nextTick(function() {
           throw new Error('Ozone depleted.');
         });
       })
