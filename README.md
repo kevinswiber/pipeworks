@@ -213,9 +213,11 @@ pipeworks()
 Handle errors during pipeline execution. Using `pipeline.fault` allows access to the current execution context when errors occur in 
 the pipeline.
 
-`callback` has the signature `function([arguments], error, next)` where `[arguments]` is the list of arguments sent to the currently executing pipe, 
-`error` is what was thrown, and `next` is a reference to the following pipe in the pipeline.  The `next` argument is provided for inspection purposes only 
-and should not be called.  See below for more information.
+
+* `callback` -  has the signature `function([arguments], error, next)`
+  *  `[arguments]` - the list of arguments sent to the currently executing pipe
+  * `error` is what was thrown
+  * `next` is a reference to the following pipe in the pipeline.  The `next` argument, in most cases, should not be called.
 
 Note: It's advisable to exit the process after an uncaught exception.  Exceptions leave your application in an unknown state. 
 This method uses [domains](http://nodejs.org/api/domain.html) under the hood.
@@ -241,6 +243,9 @@ breakfast.fault(function(context, error) {
 
 breakfast.flow({ flavor: 'plain' })
 ```
+
+Usage Notes: Joined pipelines should be treated as new pipelines.  Use fault on the joined pipeline itself for reliability.  
+It is possible to have different fault handlers for each pipeline when using siphon. 
 
 Enjoy!
 
