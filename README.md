@@ -244,8 +244,7 @@ breakfast.fault(function(context, error) {
 breakfast.flow({ flavor: 'plain' })
 ```
 
-Usage Notes: Joined pipelines should be treated as new pipelines.  Use fault on the joined pipeline itself for reliability.  
-It is possible to have different fault handlers for each pipeline when using siphon. 
+Usage Notes: Joined pipelines should be treated as new pipelines.  Use fault on the joined pipeline itself for reliability. It is possible to have different fault handlers for each pipeline when using siphon. 
 
 Enjoy!
 
