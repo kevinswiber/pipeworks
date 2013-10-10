@@ -41,6 +41,28 @@ describe('Pipeworks#fit', function() {
   });
 });
 
+describe('Pipeworks#reverse', function() {
+  it('executes a main pipe in reverse', function(done) {
+    pipeworks()
+      .fit(function(context, next) {
+        assert.equal("this is last", context);
+        done();
+      })
+      .fit(function(context, next) {
+        assert.equal("this is", context);
+        context += " last";
+        next(context);
+      })
+      .fit(function(context, next) {
+        assert.equal("this", context);
+        context += " is";
+        next(context);
+      })
+      .reverse()
+      .flow("this");
+  });
+});
+
 describe('Pipeworks#join', function() {
   it('executes a single joined pipeline', function(done) {
     var first = pipeworks().fit(function(context, next) { context.first = true; next(context); });
