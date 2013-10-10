@@ -35,6 +35,11 @@ Pipeworks.prototype.fit = function(options, pipe) {
   return this;
 };
 
+Pipeworks.prototype.reverse = function() {
+  this.pipes = this.pipes.reverse();
+  return this;
+};
+
 Pipeworks.prototype.fault = function(pipe) {
   this.faultPipe = pipe;
   return this;
