@@ -68,7 +68,7 @@ describe('Pipeworks#join', function() {
     var first = pipeworks().fit(function(context, next) { context.first = true; next(context); });
     var second = pipeworks().fit(function(context, next) { assert.ok(context.first); done(); next(context); });
 
-    first.join(second).flow({});
+    first.join(second).flow({ first: false });
   });
 
   it('executes multiple joined pipelines', function(done) {
@@ -76,7 +76,7 @@ describe('Pipeworks#join', function() {
     var second = pipeworks().fit(function(context, next) { context.second = true; next(context); });
     var third = pipeworks().fit(function(context, next) { assert.ok(context.first && context.second); done(); next(context); });
 
-    first.join(second).join(third).flow({});
+    first.join(second).join(third).flow({ first: false, second: false });
   });
 
   it('passes through empty pipelines', function(done) {
@@ -84,14 +84,14 @@ describe('Pipeworks#join', function() {
     var second = pipeworks();
     var third = pipeworks().fit(function(context, next) { assert.ok(context.first); done(); next(context); });
 
-    first.join(second).join(third).flow({});
+    first.join(second).join(third).flow({ first: false });
   });
 
   it('rebuilds built pipelines', function(done) {
     var first = pipeworks().fit(function(context, next) { context.first = true; next(context); });
     var second = pipeworks().fit(function(context, next) { assert.ok(context.first); done(); next(context); });
 
-    first.build().join(second).flow({});
+    first.build().join(second).flow({ first: false });
   });
 });
 
@@ -109,7 +109,7 @@ describe('Pipeworks#siphon', function() {
         context.a = true;
         branch.siphon(context, next);
       })
-      .flow({});
+      .flow({ a: false });
   });
 
   it('delegates control to the calling pipeline even when there is no context', function(done) {
@@ -125,6 +125,54 @@ describe('Pipeworks#siphon', function() {
         branch.siphon(next);
       })
       .flow();
+  });
+
+  it('uses a new pipeline for each siphon', function(done) {
+    var branch = pipeworks()
+      .fit(function(context, next) {
+        next(context);
+      });
+
+    var isFirstDone = false;
+    var isSecondDone = false;
+    var count = 0;
+
+    var check = function(context) {
+      count++;
+
+      if (!isFirstDone && context.number === 1) {
+        isFirstDone = true;
+      } else if (!isSecondDone && context.number === 2) {
+        isSecondDone = true;
+      } else if ((context.number === 1 && isFirstDone)
+        || (context.number === 2 && isSecondDone)) {
+        assert.fail(context.number, 1, 'Check called twice on same number.');
+      }
+
+      if (count === 2) {
+        done();
+      }
+    };
+
+    var createTask = function(number) {
+      return function(cb) {
+        pipeworks()
+          .fit(function(context, next) {
+            branch.siphon(context, next);
+          })
+          .fit(function(context, next) {
+            cb()
+            next(context);
+          })
+          .flow({ number: number });
+      };
+    };
+
+    var tasks = [1, 2].map(createTask);
+
+    tasks.forEach(function(task, i) {
+      task.call(null, function() { check({ number: i + 1 })});
+    });
   });
 });
 

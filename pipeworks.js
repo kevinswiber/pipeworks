@@ -166,7 +166,11 @@ Pipeworks.prototype.siphon = function() {
   var args = Array.prototype.slice.apply(arguments);
   var rest = args.slice(0, args.length - 1);
   var next = args[args.length - 1];
-  this.fit({ affinity: 'sink' }, function() {
+
+  var pipeline = new Pipeworks();
+  pipeline.pipes = this.pipes;
+
+  pipeline.fit({ affinity: 'sink' }, function() {
     var args = Array.prototype.slice.apply(arguments);
     var rest = args.slice(0, args.length - 1);
     var _ = args[args.length - 1];
@@ -179,12 +183,12 @@ Pipeworks.prototype.siphon = function() {
   });
 
   if (args.length > 1) {
-    this.flow.apply(this, rest);
+    pipeline.flow.apply(pipeline, rest);
   } else {
-    this.flow.call(this);
+    pipeline.flow.call(pipeline);
   }
 
-  return this;
+  return pipeline;
 };
 
 var Runner = function(pipeline, faultPipe) {
