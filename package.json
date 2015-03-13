@@ -1,6 +1,6 @@
 {
   "name": "pipeworks",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Modularize functionality into execution pipelines. Create pipes. Fit 'em together. Start the flow!",
   "main": "pipeworks.js",
   "scripts": {
