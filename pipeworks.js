@@ -201,7 +201,12 @@ var Runner = function(pipeline, faultPipe) {
   var self = this;
   this.domain.on('error', function(err) {
     if (!self.faultPipe) {
-      throw err; // rethrow
+      if (process.listeners('uncaughtException').length > 0) {
+        process.emit('uncaughtException', err);
+        return;
+      } else {
+        throw err; // rethrow;
+      }
     }
 
     var state = self.executionState;
