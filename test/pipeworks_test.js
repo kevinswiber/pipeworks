@@ -174,6 +174,26 @@ describe('Pipeworks#siphon', function() {
       task.call(null, function() { check({ number: i + 1 })});
     });
   });
+
+  it('passes to newly created siphon the faultPipe', function(done) { 
+    var thrownErr = new Error('oups')
+    var ctx = {};
+    var brokenBranch = pipeworks()
+      .fit(function(context, next) {
+        process.nextTick( function() {
+          throw thrownErr;
+        })
+      })
+      .fault(function(ctx, err, next) {
+          assert.ok(err instanceof Error, 'expected passed error');
+          next(ctx)
+      });
+
+    brokenBranch.siphon(ctx, function(passedCtx) { 
+        assert( passedCtx === ctx, 'expected passed context');
+        done()
+    });
+  })
 });
 
 describe('Pipeworks#flow', function() {

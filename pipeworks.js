@@ -169,6 +169,7 @@ Pipeworks.prototype.siphon = function() {
 
   var pipeline = new Pipeworks();
   pipeline.pipes = this.pipes;
+  if (this.faultPipe) pipeline.fault(this.faultPipe);
 
   pipeline.fit({ affinity: 'sink' }, function() {
     var args = Array.prototype.slice.apply(arguments);
@@ -185,7 +186,7 @@ Pipeworks.prototype.siphon = function() {
   if (args.length > 1) {
     pipeline.flow.apply(pipeline, rest);
   } else {
-    pipeline.flow.call(pipeline);
+    pipeline.flow();
   }
 
   return pipeline;
