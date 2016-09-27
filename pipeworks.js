@@ -169,6 +169,7 @@ Pipeworks.prototype.siphon = function() {
 
   var pipeline = new Pipeworks();
   pipeline.pipes = this.pipes;
+  pipeline.faultPipe = this.faultPipe;
 
   pipeline.fit({ affinity: 'sink' }, function() {
     var args = Array.prototype.slice.apply(arguments);
